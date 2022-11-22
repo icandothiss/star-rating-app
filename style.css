@@ -1,0 +1,33 @@
+.fa-star-half-stroke,
+.fa-solid,
+.fa-star {
+  color: orange;
+  letter-spacing: 2px;
+}
+.body {
+  height: 100vh;
+}
+.container {
+  width: 1140px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  margin-top: 50px;
+}
+#product-select {
+  margin-bottom: 15px;
+}
+.form-group {
+  margin-bottom: 15px;
+}
+.title {
+  border-top: 1px solid #dee2e6;
+  padding: 10px;
+}
+.flex {
+  display: flex;
+}
+.number-rating {
+  padding-left: 10px;
+}

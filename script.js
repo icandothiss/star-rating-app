@@ -3,33 +3,47 @@ const rating = document.getElementById("rating-control");
 const stars = document.querySelectorAll(".stars-inner");
 const numRating = document.querySelectorAll(".number-rating");
 const tr = document.querySelectorAll("tr");
-let initRating = [4.7, 3.4, 2.3, 3.6, 4.2];
-let indexReverse = JSON.parse(localStorage.getItem("indexes"));
-let rateReverse = JSON.parse(localStorage.getItem("rates"));
-console.log(indexReverse.reverse());
-console.log(rateReverse.reverse());
-console.log(localStorage.getItem("indexes"));
-console.log(localStorage.getItem("rates"));
-let indexresult = [];
-let rateresult = [];
-for (let i = 1; i < 6; i++) {
-  if (indexReverse.includes(i)) {
-    let indexes = indexReverse.indexOf(i);
-    indexresult.push(indexReverse[indexes]);
-    rateresult.push(rateReverse[indexes]);
-  }
-}
-localStorage.setItem("indexes", JSON.stringify(indexresult));
-localStorage.setItem("rates", JSON.stringify(rateresult));
 
-for (let i = 0; i < indexresult.length; i++) {
-  initRating[i] = rateresult[i];
-}
+let initRating = [4.7, 3.4, 2.3, 3.6, 4.2];
 
 console.log(initRating);
 
 productInput.addEventListener("change", productFunc);
 rating.addEventListener("blur", ratingFunc);
+
+if (
+  localStorage.getItem("rates") !== null &&
+  localStorage.getItem("indexes") !== null
+) {
+  let indexReverse = JSON.parse(localStorage.getItem("indexes"));
+  let rateReverse = JSON.parse(localStorage.getItem("rates"));
+  console.log(indexReverse.reverse());
+  console.log(rateReverse.reverse());
+  let indexStorage = JSON.parse(localStorage.getItem("indexes"));
+  console.log(indexStorage);
+  console.log(localStorage.getItem("rates"));
+  let indexresult = [];
+  let rateresult = [];
+  for (let i = 1; i < 6; i++) {
+    if (indexReverse.includes(i)) {
+      let indexes = indexReverse.indexOf(i);
+      indexresult.push(indexReverse[indexes]);
+      rateresult.push(rateReverse[indexes]);
+      console.log(rateresult);
+    }
+  }
+  for (let rate in initRating) {
+    let storageIndex = 0;
+    for (let index in indexStorage) {
+      initRating[indexStorage[index] - 1] = rateresult[storageIndex];
+      storageIndex++;
+      console.log(rateresult);
+    }
+    break;
+  }
+  localStorage.setItem("indexes", JSON.stringify(indexresult));
+  localStorage.setItem("rates", JSON.stringify(rateresult));
+}
 
 let output = [];
 for (let i = 0; i < initRating.length; i++) {

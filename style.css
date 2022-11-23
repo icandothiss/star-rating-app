@@ -20,6 +20,9 @@
 }
 .form-group {
   margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .title {
   border-top: 1px solid #dee2e6;
@@ -30,4 +33,11 @@
 }
 .number-rating {
   padding-left: 10px;
+}
+#btn-save {
+  appearance: none;
+  outline: none;
+  border: none;
+  background-color: brown;
+  color: #fff;
 }

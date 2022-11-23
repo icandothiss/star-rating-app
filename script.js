@@ -1,159 +1,178 @@
 const productInput = document.getElementById("product-select");
-const rating = document.getElementById("rating-control");
+const btnSave = document.getElementById("btn-save");
+const inputRating = document.getElementById("rating-control");
 const stars = document.querySelectorAll(".stars-inner");
 const numRating = document.querySelectorAll(".number-rating");
 const tr = document.querySelectorAll("tr");
+let products = localStorage.getItem("products")
+  ? JSON.parse(localStorage.getItem("products"))
+  : getOptions();
+console.log(products);
 
-let initRating = [4.7, 3.4, 2.3, 3.6, 4.2];
+productInput.addEventListener("change", () => {
+  inputRating.disabled = false;
+});
+btnSave.addEventListener("click", addRating);
 
-console.log(initRating);
-
-productInput.addEventListener("change", productFunc);
-rating.addEventListener("blur", ratingFunc);
-
-if (
-  localStorage.getItem("rates") !== null &&
-  localStorage.getItem("indexes") !== null
-) {
-  let indexReverse = JSON.parse(localStorage.getItem("indexes"));
-  let rateReverse = JSON.parse(localStorage.getItem("rates"));
-  console.log(indexReverse.reverse());
-  console.log(rateReverse.reverse());
-  let indexStorage = JSON.parse(localStorage.getItem("indexes"));
-  console.log(indexStorage);
-  console.log(localStorage.getItem("rates"));
-  let indexresult = [];
-  let rateresult = [];
-  for (let i = 1; i < 6; i++) {
-    if (indexReverse.includes(i)) {
-      let indexes = indexReverse.indexOf(i);
-      indexresult.push(indexReverse[indexes]);
-      rateresult.push(rateReverse[indexes]);
-      console.log(rateresult);
-    }
+function getOptions() {
+  let _products = [];
+  const options = document.getElementsByTagName("option");
+  for (let index = 1; index < options.length; index++) {
+    const element = options[index];
+    _products.push({ name: element.value, rating: randomizeRating() });
   }
-  for (let rate in initRating) {
-    let storageIndex = 0;
-    for (let index in indexStorage) {
-      initRating[indexStorage[index] - 1] = rateresult[storageIndex];
-      storageIndex++;
-      console.log(rateresult);
-    }
-    break;
-  }
-  localStorage.setItem("indexes", JSON.stringify(indexresult));
-  localStorage.setItem("rates", JSON.stringify(rateresult));
+  return _products;
 }
 
-let output = [];
-for (let i = 0; i < initRating.length; i++) {
-  const product = productInput.value;
-  const rate = initRating[i];
-  let intRate = Math.floor(rate);
-  let decRate = (rate - intRate).toFixed(1);
-  let empty = 5 - intRate;
-  numRating[i].innerText = rate;
-  deleteChildren(stars[i]);
-  for (let i = 0; i < intRate; i++) {
-    output += `<i class="fa-solid fa-star"></i>`;
-  }
-  stars[i].innerHTML += output;
-  if (decRate === "0.0") {
-    for (let j = 0; j < empty; j++) {
-      stars[i].innerHTML += `<i class="fa-regular fa-star"></i>`;
-    }
-  } else {
-    if (decRate >= 0.8) {
-      stars[i].innerHTML += `<i class="fa-solid fa-star"></i>`;
-      for (let q = 0; q < empty - 1; q++) {
-        stars[i].innerHTML += `<i class="fa-regular fa-star"></i>`;
-      }
-    } else if (decRate < 0.8 && decRate >= 0.3) {
-      stars[i].innerHTML += `<i class="fa-solid fa-star-half-stroke"></i>`;
-      for (let q = 0; q < empty - 1; q++) {
-        stars[i].innerHTML += `<i class="fa-regular fa-star"></i>`;
-      }
-    } else if (decRate < 0.3) {
-      stars[i].innerHTML += `<i class="fa-regular fa-star"></i>`;
-      for (let q = 0; q < empty - 1; q++) {
-        stars[i].innerHTML += `<i class="fa-regular fa-star"></i>`;
-      }
-    }
-  }
-  output = [];
+function randomizeRating() {
+  return Number((Math.random() * 5).toFixed(1));
 }
+function createStars() {
+  let _output = "";
+  for (let i = 0; i < products.length; i++) {
+    const rate = products[i].rating;
+    numRating[i].innerText = rate;
+    stars[i].innerHTML = "";
+    let [initRate, decimalRate] = rate.toString().split(".");
+    decimalRate = parseInt(decimalRate) || 0;
 
-function productFunc() {
-  rating.disabled = false;
-}
-
-function ratingFunc() {
-  const rate = rating.value;
-  let intRate = Math.floor(rate);
-  let decRate = (rate - intRate).toFixed(1);
-  let empty = 5 - intRate;
-  const product = productInput.value;
-  let output = [];
-
-  for (let i = 1; i < tr.length; i++) {
-    if (product === tr[i].childNodes[1].innerText) {
-      saveRates(rate, i);
-      numRating[i - 1].innerText = rate;
-      console.log(stars[i - 1]);
-      deleteChildren(stars[i - 1]);
-      for (let i = 0; i < intRate; i++) {
-        output += `<i class="fa-solid fa-star"></i>`;
-      }
-      stars[i - 1].innerHTML += output;
-      if (decRate === "0.0") {
-        for (let j = 0; j < empty; j++) {
-          stars[i - 1].innerHTML += `<i class="fa-regular fa-star"></i>`;
-        }
+    for (let j = 0; j < 5; j++) {
+      if (j < initRate) {
+        _output += `<i class="fa-solid fa-star"></i>`;
       } else {
-        if (decRate >= 0.8) {
-          stars[i - 1].innerHTML += `<i class="fa-solid fa-star"></i>`;
-          for (let q = 0; q < empty - 1; q++) {
-            stars[i - 1].innerHTML += `<i class="fa-regular fa-star"></i>`;
-          }
-        } else if (decRate < 0.8 && decRate >= 0.3) {
-          stars[
-            i - 1
-          ].innerHTML += `<i class="fa-solid fa-star-half-stroke"></i>`;
-          for (let q = 0; q < empty - 1; q++) {
-            stars[i - 1].innerHTML += `<i class="fa-regular fa-star"></i>`;
-          }
-        } else if (decRate < 0.3) {
-          stars[i - 1].innerHTML += `<i class="fa-regular fa-star"></i>`;
-          for (let q = 0; q < empty - 1; q++) {
-            stars[i - 1].innerHTML += `<i class="fa-regular fa-star"></i>`;
-          }
+        if (decimalRate < 3) {
+          _output += `<i class="fa-regular fa-star"></i>`;
+        } else if (decimalRate >= 8) {
+          _output += `<i class="fa-solid fa-star"></i>`;
+        } else {
+          _output += `<i class="fa-solid fa-star-half-stroke"></i>`;
         }
+        decimalRate = 0;
       }
     }
+    stars[i].innerHTML = _output;
+
+    _output = "";
   }
+}
+function saveRates(product, index) {
+  products[index] = product;
+  localStorage.setItem("products", JSON.stringify(products));
+  createStars();
 }
 
-function deleteChildren(parent) {
-  while (parent.firstChild) {
-    parent.removeChild(parent.lastChild);
-  }
-}
+function addRating() {
+  const name = productInput.value;
+  const rating = inputRating.value;
+  const productIndex = products.map((p) => p.name).indexOf(name);
+  saveRates({ name: name, rating: Number(rating) }, productIndex);
 
-function saveRates(rate, index) {
-  let rates;
-  let indexes;
-  if (
-    localStorage.getItem("rates") === null &&
-    localStorage.getItem("indexes") === null
-  ) {
-    rates = [];
-    indexes = [];
-  } else {
-    rates = JSON.parse(localStorage.getItem("rates"));
-    indexes = JSON.parse(localStorage.getItem("indexes"));
-  }
-  rates.push(rate);
-  indexes.push(index);
-  localStorage.setItem("rates", JSON.stringify(rates));
-  localStorage.setItem("indexes", JSON.stringify(indexes));
+  console.log(productIndex);
 }
+createStars();
+// if (
+//   localStorage.getItem("products") !== null &&
+//   localStorage.getItem("indexes") !== null
+// ) {
+//   let indexReverse = JSON.parse(localStorage.getItem("indexes"));
+//   console.log(indexReverse.reverse());
+//   console.log(rateReverse.reverse());
+//   let indexStorage = JSON.parse(localStorage.getItem("indexes"));
+//   console.log(indexStorage);
+//   console.log(localStorage.getItem("rates"));
+//   let indexresult = [];
+//   let rateresult = [];
+//   for (let i = 1; i < 6; i++) {
+//     if (indexReverse.includes(i)) {
+//       let indexes = indexReverse.indexOf(i);
+//       indexresult.push(indexReverse[indexes]);
+//       rateresult.push(rateReverse[indexes]);
+//       console.log(rateresult);
+//     }
+//   }
+//   for (let rate in products) {
+//     let storageIndex = 0;
+//     for (let index in indexStorage) {
+//       products[indexStorage[index] - 1] = rateresult[storageIndex];
+//       storageIndex++;
+//       console.log(rateresult);
+//     }
+//     break;
+//   }
+//   localStorage.setItem("indexes", JSON.stringify(indexresult));
+//   localStorage.setItem("rates", JSON.stringify(rateresult));
+// }
+
+//   stars[i].innerHTML += output;
+//   if (decRate === "0.0") {
+//     for (let j = 0; j < empty; j++) {
+//       stars[i].innerHTML += `<i class="fa-regular fa-star"></i>`;
+//     }
+//   } else {
+//     if (decRate >= 0.8) {
+//       stars[i].innerHTML += `<i class="fa-solid fa-star"></i>`;
+//       for (let q = 0; q < empty - 1; q++) {
+//         stars[i].innerHTML += `<i class="fa-regular fa-star"></i>`;
+//       }
+//     } else if (decRate < 0.8 && decRate >= 0.3) {
+//       stars[i].innerHTML += `<i class="fa-solid fa-star-half-stroke"></i>`;
+//       for (let q = 0; q < empty - 1; q++) {
+//         stars[i].innerHTML += `<i class="fa-regular fa-star"></i>`;
+//       }
+//     } else if (decRate < 0.3) {
+//       stars[i].innerHTML += `<i class="fa-regular fa-star"></i>`;
+//       for (let q = 0; q < empty - 1; q++) {
+//         stars[i].innerHTML += `<i class="fa-regular fa-star"></i>`;
+//       }
+//     }
+//   }
+
+// function productFunc() {
+//   inputRating.disabled = false;
+// }
+
+// function ratingFunc() {
+//   const rate = inputRating.value;
+//   let intRate = Math.floor(rate);
+//   let decRate = (rate - intRate).toFixed(1);
+//   let empty = 5 - intRate;
+//   const productName = productInput.value;
+//   let output = [];
+
+//   for (let i = 1; i < tr.length; i++) {
+//     if (productName === tr[i].childNodes[1].innerText) {
+//       saveRates({ name: productName, rate: rate }, i);
+//       numRating[i - 1].innerText = rate;
+//       console.log(stars[i - 1]);
+//       deleteChildren(stars[i - 1]);
+//       for (let i = 0; i < intRate; i++) {
+//         output += `<i class="fa-solid fa-star"></i>`;
+//       }
+//       stars[i - 1].innerHTML += output;
+//       if (decRate === "0.0") {
+//         for (let j = 0; j < empty; j++) {
+//           stars[i - 1].innerHTML += `<i class="fa-regular fa-star"></i>`;
+//         }
+//       } else {
+//         if (decRate >= 0.8) {
+//           stars[i - 1].innerHTML += `<i class="fa-solid fa-star"></i>`;
+//           for (let q = 0; q < empty - 1; q++) {
+//             stars[i - 1].innerHTML += `<i class="fa-regular fa-star"></i>`;
+//           }
+//         } else if (decRate < 0.8 && decRate >= 0.3) {
+//           stars[
+//             i - 1
+//           ].innerHTML += `<i class="fa-solid fa-star-half-stroke"></i>`;
+//           for (let q = 0; q < empty - 1; q++) {
+//             stars[i - 1].innerHTML += `<i class="fa-regular fa-star"></i>`;
+//           }
+//         } else if (decRate < 0.3) {
+//           stars[i - 1].innerHTML += `<i class="fa-regular fa-star"></i>`;
+//           for (let q = 0; q < empty - 1; q++) {
+//             stars[i - 1].innerHTML += `<i class="fa-regular fa-star"></i>`;
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
